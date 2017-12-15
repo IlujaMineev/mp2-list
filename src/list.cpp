@@ -24,7 +24,6 @@
 
   void List::InsertAfter(Node* node, const DataType& d) // вставить элемент d после звена node
   {
-	Node* temp;
 	if (Node* NewNode = new Node)
 	{
 		NewNode -> data = d;
@@ -37,7 +36,7 @@
 
   void List::Delete(const DataType& d) // удалить звено со значением data = d
   {
-	Node* i;
+	Node* i = head;
 	while (i)
 	{
 		if (i -> data = d)
@@ -45,58 +44,114 @@
 			i -> prew -> next = i -> next;
 			i -> next -> prew = i -> prew;
 			delete(i);
-			head = i;
+			if (head == i)
+				if (i -> next)
+					head = i -> next;
+				else 
+					head = i -> prew;
 		}
-	};
+		i = i -> next;
+	}
   };
+
   Node* List::Search(const DataType& d) // найти указатель на звено со значением data = d
   {
 	Node* i = head;
-	while (i -> data != d)
+	while ((i != NULL) && (i -> data != d))
 	{
 		i = i->next;
 	}
+	return i;
   };
 
   void List::Clean() // удалить все звенья
   {
-	Node* NewHead;
+	Node* NewHead = head;
 	while (NewHead)
 	{
 		NewHead = head -> next;
 		delete(head);
-		head = NewHead;
 	}
-
+	head = NULL;
   };
 
   int List::GetSize() // узнать число звеньев в списке
   {
-  
+	  int it = 0;
+	  Node* i = head;
+	  while (i != NULL)
+	{
+		i = i->next;
+		it++;
+	}
+	return it;
   };
 
   Node* List::GetHead() // получить указатель на первое звено списка
   {
-  
+		return head;
   };
 
-  void Inverse() // инвертировать список, т.е. звенья должны идти в обратном порядке
+  Node* List::GetTail() // получить указатель на последнее звено списка
   {
-  
+		return tail;
+  };
+
+  void List::Inverse() // инвертировать список, т.е. звенья должны идти в обратном порядке
+  {
+		List src;
+		Node* i = head;
+		while (i != NULL)
+		{
+			src.InserToHead(i -> data);
+			i = i->next;
+		}
+		(*this).Clean();
+		i = src.GetHead();
+		for (int s = 0; s < src.GetSize(); s++)
+		{
+			(*this).InserToHead(i -> data);
+			i = i -> next;
+		}
   };
 
   List List::Merge(Node* node, const List& list2) // создать список3, добавив список2 в текущий список после указателя node  
   {
-	List Res;
-	Node* src = head;
-	while (src)
-	{
-		
-	}
-
+		List Res;
+		Node* i = tail;
+		while (i != node)
+		{
+			Res.InserToHead(i -> data);
+			i = i -> prew;
+		}
+		Node* j = tail;
+		while (j != node)
+		{
+			Res.InserToHead(j -> data);
+			j = j -> prew;
+		}
+		while (i != NULL)
+		{
+			Res.InserToHead(i -> data);
+			i = i -> prew;
+		}
+		return Res;
   };
 
   List List::Merge(const List& list2) // создать список3, добавив в конец текущего списка список2
   {
-  
+		List Res;
+		Node* i = tail;
+		while (i)
+		{
+			Res.InserToHead(i -> data);
+			i = i -> prew;
+		}
+		i = list2.tail;
+		while (i)
+		{
+			Res.InserToHead(i -> data);
+			i = i -> prew;
+		}
+		return Res;
   };
