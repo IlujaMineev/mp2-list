@@ -10,7 +10,6 @@ struct Node
 {
   DataType data;
   Node* next;
-  Node* prew;
   // здесь могут быть конструкторы, методы, деструктор Node
 };
 
@@ -26,7 +25,7 @@ public:
 	  tail = NULL;
   };
   List(const List& list2);
-  List& operator=(const List& list2);
+  List& operator=(List& list2);
   ~List() {Clean();};
 
   void InserToHead(const DataType& d); // вставить элемент d первым
@@ -35,15 +34,25 @@ public:
   void Delete(const DataType& d); // удалить звено со значением data = d
   Node* Search(const DataType& d); // найти указатель на звено со значением data = d
   void Clean(); // удалить все звенья
-  int GetSize(); // узнать число звеньев в списке
-  Node* GetHead(); // получить указатель на первое звено списка
-  Node* GetTail(); // получить указатель на последнее звено списка
+  int GetSize() const; // узнать число звеньев в списке
+  Node* GetHead() const; // получить указатель на первое звено списка
+  Node* GetTail() const; // получить указатель на последнее звено списка
 
   void Inverse(); // инвертировать список, т.е. звенья должны идти в обратном порядке
-  List Merge(Node* node, const List& list2); // создать список3, добавив список2 в текущий список после указателя node  
-  List Merge(const List& list2); // создать список3, добавив в конец текущего списка список2
+  List Merge(Node* node, List& list2); // создать список3, добавив список2 в текущий список после указателя node  
+  List Merge(List& list2); // создать список3, добавив в конец текущего списка список2
 
-  friend ostream& operator<<(ostream& os, const List& l);
+  friend ostream& operator<<(ostream& os, List& l)
+  {
+	  Node* A = l.GetHead();
+	  while (A)
+	  {
+		  cout<<A -> data<<" -> ";
+	  }
+	  cout<<endl;
+  };
+
+  bool operator==(const List& list2);
 };
 
 #endif
