@@ -1,10 +1,10 @@
 #include "list.h"
 
-  List& List::operator=(List& list2)
+  List& List::operator=(const List& list2) //проверяно
   {
+	List lst(list2);
 	Clean();
-	Node* tek = list2.GetHead();
-	InserToHead(tek -> data);
+	Node* tek = lst.GetHead();
 	while (tek != NULL)
 	{
 		InserToTail(tek -> data);
@@ -13,130 +13,163 @@
 	return *this;
   };
 
-  void List::InserToHead(const DataType& d) // вставить элемент d первым
+  List::List(const List& list2) //проверяно
   {
-	if (Node* NewNode = new Node)
+	if (list2.head != NULL)
 	{
-		NewNode -> next = head;
-		NewNode -> data = d;
-		head = NewNode;	
+		Node* tek = list2.GetHead();
+		head = NULL;
+		tail = NULL;
+		while (tek != NULL)
+		{
+			InserToTail(tek -> data);
+			tek = tek -> next;
+		}
+	}
+	else
+	{
+		head = NULL;
+		tail = NULL;
 	}
   };
 
-  void List::InserToTail(const DataType& d) // вставить элемент d последним
+  void List::InserToHead(const DataType& d) // вставить элемент d первым //проверяно
   {
-	if (Node* NewNode = new Node)
-	{
+		Node* NewNode = new Node;
+		NewNode -> next = head;
+		NewNode -> data = d;
+		head = NewNode;
+		if (tail == NULL)
+			tail = head;
+  };
+
+  void List::InserToTail(const DataType& d) // вставить элемент d последним //проверяно
+  {
+	   Node* NewNode = new Node;
 		NewNode -> data = d;
 		NewNode -> next = NULL;
 		if (tail)
 			tail -> next = NewNode;
+		else
+			head = NewNode;
 		tail = NewNode;
-	}
   };
 
-  void List::InsertAfter(Node* node, const DataType& d) // вставить элемент d после звена node
+  void List::InsertAfter(Node* node, const DataType& d) // вставить элемент d после звена node //проверяно
   {
-	if (Node* NewNode = new Node)
+	if (head)
 	{
-		NewNode -> data = d;
-		NewNode -> next = node -> next;
-		node -> next = NewNode;
+		if (node)
+		{
+			Node* NewNode = new Node;
+			NewNode -> data = d;
+			NewNode -> next = node -> next;
+			node -> next = NewNode;
+		}
 	}
+	else
+		throw "insert after for empty list";
   };
 
-  void List::Delete(const DataType& d) // удалить звено со значением data = d
+  void List::Delete(const DataType& d) // удалить звено со значением data = d //проверяно
   {
 	Node* i = head;
 	Node* what;
-	if (i -> data == d)
+	if (head)
 	{
-		head = i -> next;
-		delete(i);
-	}
-	while (i)
-	{
-		if (i -> next -> data == d)
+		if (i -> data == d)
 		{
-			what = i -> next;
-			i -> next = i -> next -> next;
-			if (what -> data == tail -> data)
-				tail = i;
-			delete(what);
+			head = i -> next;
+			delete(i);
 		}
-		i = i -> next;
+		else
+		{
+				while ((i -> next != NULL) && (i -> next -> data != d))
+				{
+					i = i -> next;
+				}
+				if ((i -> next != NULL) && (i -> next -> data == d))
+				{
+					what = i -> next;
+					i -> next = what -> next;
+					delete(what);
+				}
+		}
 	}
   };
 
-  Node* List::Search(const DataType& d) // найти указатель на звено со значением data = d
+  Node* List::Search(const DataType& d) // найти указатель на звено со значением data = d //проверяно
   {
 	Node* i = head;
-	while ((i != NULL) && (i -> data != d))
+	if (head)
 	{
-		i = i->next;
+		while ((i != NULL) && (i -> data != d))
+		{
+			i = i->next;
+		}
+		if ((i != NULL) && (i -> data == d))
+			return i;
+		else
+			return 0;
 	}
-	if (i -> data == d)
-		return i;
 	else
 		return 0;
   };
 
-  void List::Clean() // удалить все звенья
+  void List::Clean() // удалить все звенья //проверяно
   {
 	Node* NewHead = head;
-	while (NewHead)
+	while (head)
 	{
 		NewHead = head -> next;
 		delete(head);
+		head = NewHead;
 	}
 	head = NULL;
+	tail = NULL;
   };
 
-  int List::GetSize() const // узнать число звеньев в списке
+  int List::GetSize() const // узнать число звеньев в списке //проверяно
   {
 	  int it = 0;
 	  Node* i = head;
 	  while (i != NULL)
-	{
-		i = i->next;
-		it++;
-	}
-	return it;
+	  {
+		  i = i->next;
+	  	  it++;
+	  }
+	  return it;
   };
 
-  Node* List::GetHead() const // получить указатель на первое звено списка
+  Node* List::GetHead() const // получить указатель на первое звено списка //проверяно
   {
 		return head;
   };
 
-  Node* List::GetTail() const // получить указатель на последнее звено списка
+  Node* List::GetTail() const // получить указатель на последнее звено списка //проверяно
   {
 		return tail;
   };
 
-  void List::Inverse() // инвертировать список, т.е. звенья должны идти в обратном порядке
+  void List::Inverse() // инвертировать список, т.е. звенья должны идти в обратном порядке //проверяно
   {
-		List src;
-		Node* i = head;
+		List src = *this;
+		Node* i = src.head;
+		Clean();
 		while (i != NULL)
 		{
-			src.InserToHead(i -> data);
+			InserToHead(i -> data);
 			i = i->next;
 		}
-		(*this).Clean();
-		i = src.GetHead();
-		for (int s = 0; s < src.GetSize(); s++)
-		{
-			(*this).InserToHead(i -> data);
-			i = i -> next;
-		}
   };
 
-  List List::Merge(Node* node, List& list2) // создать список3, добавив список2 в текущий список после указателя node  
+  List List::Merge(Node* node, List& list2) // создать список3, добавив список2 в текущий список после указателя node  //проверяно
   {
-		List Res = *this;
+	  if (node)
+	  {
+		List Res(*this);
 		Node* i = list2.head;
-		Node* tek = node;
+		Node* tek = Res.Search(node -> data);
 		while (i)
 		{
 			Res.InsertAfter(tek, i -> data);
@@ -144,23 +177,24 @@
 			i = i -> next;
 		}
 		return Res;
+	  }
+	  else
+		  return *this;
   };
 
-  List List::Merge(List& list2) // создать список3, добавив в конец текущего списка список2
+  List List::Merge(List& list2) // создать список3, добавив в конец текущего списка список2 //проверяно
   {
-		List Res = *this;
+		List Res(*this);
 		Node* i = list2.head;
-		Node* tek = tail;
 		while (i)
 		{
-			Res.InsertAfter(tek, i -> data);
-			tek = tek -> next;
+			Res.InserToTail(i -> data);
 			i = i -> next;
 		}
 		return Res;
   };
 
-  bool List::operator==(const List& list2)
+  bool List::operator==(const List& list2) const
   {
 	  if (GetSize() == list2.GetSize())
 	  {
